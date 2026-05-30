@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tekken 8 Frame & Combo Database</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a1012 0%, #050404 100%);
+            color: #ffffff;
+            font-family: 'Rajdhani', sans-serif;
+            padding-bottom: 50px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* HEADER BANNER */
+        .header-banner {
+            background: linear-gradient(180deg, #11090a 0%, #000000 100%);
+            border-bottom: 4px solid #ff1a1a;
+            text-align: center;
+            padding: 40px 10px;
+            margin-bottom: 35px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(255, 26, 26, 0.15);
+        }
+
+        .header-banner h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 3.5rem;
+            letter-spacing: 6px;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3), 3px 3px 0px #ff1a1a;
+            transform: skewX(-10deg);
+            margin-bottom: 5px;
+        }
+
+        .header-banner p {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: #b0b0b0;
+            font-size: 1rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* DYNAMIC SEARCH BAR STYLE */
+        .search-wrapper {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            background-color: #0d0708;
+            border: 2px solid #4a282c;
+            border-radius: 4px;
+            color: #ffffff;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff1a1a;
+            box-shadow: 0 0 15px rgba(255, 26, 26, 0.4);
+        }
+
+        /* CHARACTER GRID BOX */
+        .character-selection-box {
+            background-color: rgba(5, 4, 4, 0.95);
+            border: 1px solid #3a1a1e;
+            border-top: 4px solid #ff1a1a;
+            padding: 25px;
+            margin-bottom: 35px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .char-btn {
+            background: linear-gradient(135deg, #1f1416 0%, #0a0607 100%);
+            color: #d1d1d1;
+            border: 1px solid #4a282c;
+            padding: 10px 4px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-align: center;
+            text-transform: uppercase;
+            clip-path: polygon(0 0, 90% 0, 100% 25%, 100% 100%, 10% 100%, 0% 75%);
+        }
+
+        .char-btn:hover {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+        }
+
+        .char-btn.active {
+            background: linear-gradient(135deg, #ff1a1a 0%, #990000 100%);
+            color: #ffffff;
+            border: 1px solid #ff6666;
+            font-weight: 900;
+            box-shadow: 0 0 20px rgba(255, 26, 26, 0.7);
+        }
+        
+        .char-btn.dlc-char {
+            border-color: #bfa15f;
+        }
+        .char-btn.dlc-char.active {
+            background: linear-gradient(135deg, #d4af37 0%, #8a6d1c 100%);
+            border: 1px solid #fff2a3;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+        }
+
+        /* LAYOUT MAIN CONTENT */
+        .main-content {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        @media (max-width: 850px) {
+            .main-content { grid-template-columns: 1fr; }
+        }
+
+        /* CARD PROFIL KIRI */
+        .character-card {
+            border: 1px solid #2e1619;
+            border-top: 4px solid #ff1a1a;
+            background-color: #0d0708;
+            padding: 25px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+        }
+
+        /* BOX KARAKTER LANDSCAPE */
+        .char-banner-box {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #4a2327;
+            overflow: hidden;
+            position: relative;
+            background-color: #140b0d;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .char-banner-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .char-banner-placeholder {
+            position: absolute;
+            z-index: 1;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: rgba(255, 26, 26, 0.04);
+            text-transform: uppercase;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .char-name-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+            color: #ffffff;
+            border-left: 5px solid #ff1a1a;
+            padding-left: 12px;
+        }
+
+        .character-desc {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            text-align: justify;
+            color: #c4b6b8;
+        }
+
+        /* AREA KANAN WITH DOUBLE CONTAINERS DISPLAY */
+        .combo-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.4rem;
+            color: #ffffff;
+            border-bottom: 2px solid #ff1a1a;
+            padding-bottom: 6px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .combo-box {
+            background-color: #0d0708;
+            border: 1px solid #261214;
+            border-left: 5px solid #ff1a1a;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            margin-bottom: 15px;
+        }
+
+        .combo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .combo-name {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .combo-damage {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            color: #ff1a1a;
+            font-size: 1.2rem;
+            background: rgba(255, 26, 26, 0.1);
+            padding: 6px 14px;
+            border: 1px solid rgba(255, 26, 26, 0.3);
+        }
+
+        /* NOTASI TOMBOL VIA BOX */
+        .notation-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .input-btn {
+            background: linear-gradient(180deg, #2b2b2b 0%, #141414 100%);
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px 18px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 5px 8px rgba(0,0,0,0.5);
+        }
+
+        .attack-circle {
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+            color: #ffffff;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 900;
+            box-shadow: 0 0 8px rgba(0, 114, 255, 0.6);
+        }
+
+        /* COMBO VIDEO DISPLAY STYLE */
+        .combo-video-wrapper {
+            margin-bottom: 15px;
+            max-width: 100%;
+            border: 1px solid #261214;
+            background: #000;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .combo-video-wrapper video {
+            max-width: 100%;
+            max-height: 220px;
+            object-fit: contain;
+        }
+
+        .silver-arrow { color: #666666; font-size: 1.3rem; font-weight: bold; }
+        .combo-footer-note { font-size: 1rem; color: #9c9192; border-top: 1px dashed #261214; padding-top: 12px; }
+
+        .footer-tekken-8 {
+            text-align: center;
+            padding: 35px 10px;
+            margin-top: 60px;
+            background-color: #000000;
+            border-top: 2px solid #ff1a1a;
+        }
+
+        .footer-credits {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ffffff 0%, #999999 50%, #ffffff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform: skewX(-8deg);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-banner">
+        <h1>TEKKEN 8</h1>
+        <p>CHARACTER FRAME & COMBO DATABASE</p>
+    </div>
+
+    <div class="container">
+        <div class="search-wrapper">
+            <input type="text" id="charSearchInput" class="search-input" placeholder="CARI KARAKTER...">
+        </div>
+
+        <div class="character-selection-box">
+            <div class="char-grid" id="characterGrid"></div>
+        </div>
+
+        <div class="main-content">
+            <aside class="character-card">
+                <div class="char-banner-box">
+                    <div id="charPlaceholder" class="char-banner-placeholder"></div>
+                    <img id="charImage" src="" alt="" onerror="this.style.display='none';">
+                </div>
+                <div id="charName" class="char-name-title"></div>
+                <div id="charDesc" class="character-desc"></div>
+            </aside>
+
+            <main class="combo-container">
+                <div>
+                    <h2 class="section-title">Pro Punish Combos</h2>
+                    <div id="punishCombosContainer"></div>
+                </div>
+
+                <div>
+                    <h2 class="section-title">Popular Combos</h2>
+                    <div id="popularCombosContainer"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer class="footer-tekken-8">
+        <span class="footer-credits">BY MALIK MARBOT</span>
+    </footer>
+
+    <script>
+        const characterDatabase = {
+            "alisa": {
+                name: "Alisa Bosconovitch",
+                file: "Alisa.jpg",
+                desc: "Android lincah bersayap jet yang bisa merubah kedua tangannya menjadi gergaji mesin chip-damage.",
+                punish: [{ name: "Incentive Accord (i15)", dmg: "67 DMG", moves: ["df+2"], note: "Aman digunakan meski diblok lawan.", video: "alisa_punish.mp4" }],
+                popular: [{ name: "Chainsaw Overdrive", dmg: "92 DMG", moves: ["uf+4,4", "f+2", "DES 2,1", "DES 1+2"], note: "Mode gergaji aktif memberikan tekanan chip damage tak terbendung.", video: "alisa_popular.mp4" }]
+            },
+            "anna": {
+                name: "Anna Williams",
+                file: "Anna williams.jpg",
+                desc: "Adik Nina yang glamor sekaligus mematikan, master teknik Koppojutsu dengan mixup stance Chaos Judgement yang sangat agresif.",
+                punish: [{ name: "Scarlet Kiss (i15)", dmg: "70 DMG", moves: ["df+2"], note: "Launcher andalan yang memberikan frame advantage tinggi.", video: "anna_punish.mp4" }],
+                popular: [{ name: "Chaos Judgement Vortex", dmg: "95 DMG", moves: ["f+4", "CJAM 2,1", "db+3", "f,f+1+2"], note: "Memaksa musuh menebak serangan high-low bertempo cepat.", video: "anna_popular.mp4" }]
+            },
+            "armor king": {
+                name: "Armor King",
+                file: "Armor king.jpg",
+                desc: "Pegulat topeng jaguar hitam misterius berdarah dingin. Menggabungkan bantingan brutal Lucha Libre dengan pukulan tinju gelap dan semburan Black Mist.",
+                punish: [{ name: "Black Fire Fist (i15)", dmg: "74 DMG", moves: ["df+1"], note: "Whiff punisher jarak dekat super solid penjaga keunggulan frame.", video: "armor_king_punish.mp4" }],
+                popular: [{ name: "Shadow Lariat Driver", dmg: "102 DMG", moves: ["f,n,d,df+2", "df+3", "1+2,f", "Darkness Lariat", "Burning Hammer"], note: "Kombo bantingan berantai udara dengan damage tebal khas sirkuit pro.", video: "armor_king_popular.mp4" }]
+            },
+            "asuka": {
+                name: "Asuka Kazama",
+                file: "Asuka Kazama.jpg",
+                desc: "Gaya bela diri tradisional Kazama yang berfokus pada counter-attack defensif dan pembalik keadaan.",
+                punish: [{ name: "Whiplash Launcher (i15)", dmg: "66 DMG", moves: ["df+2"], note: "Skat menghukum serangan atas yang meleset.", video: "asuka_punish.mp4" }],
+                popular: [{ name: "Naniwa Pop combo", dmg: "86 DMG", moves: ["f+2", "db+4,3", "1+2", "ff+2,1"], note: "Mudah dieksekusi pasca parry sukses.", video: "asuka_popular.mp4" }]
+            },
+            "azucena": {
+                name: "Azucena",
+                file: "Azucena.jpg",
+                desc: "Ratu kopi Peru lincah yang mengandalkan tarian stance otomatis menghindari pukulan atas.",
+                punish: [{ name: "Coffee Rush Launcher (i15)", dmg: "68 DMG", moves: ["df+2"], note: "Hantaman siku pematah momentum lawan.", video: "azucena_punish.mp4" }],
+                popular: [{ name: "Libertador Blend 100%", dmg: "93 DMG", moves: ["f+4,4", "Libertador 1,2", "df+1,4", "ff+3,4"], note: "Mengacak-acak pertahanan musuh lewat auto evasion stance.", video: "azucena_popular.mp4" }]
+            },
+            "bryan": {
+                name: "Bryan Fury",
+                file: "Bryan.jpg",
+                desc: "Cyborg psikopat penganut Kickboxing brutal dengan tekanan counter-hit mematikan lewat Heat Dash.",
+                punish: [{ name: "Jet Upper Instant (i14)", dmg: "74 DMG", moves: ["fb+2"], note: "Salah satu punisher tercepat dan tersulit di game.", video: "bryan_punish.mp4" }],
+                popular: [{ name: "Taunt Jet Upper Legacy", dmg: "105 DMG", moves: ["Taunt (1+3+4)", "fb+2", "f+1", "b+3,4,f", "u+4"], note: "Frame precision tingkat dewa, signature move para pro player.", video: "bryan_popular.mp4" }]
+            },
+            "claudio": {
+                name: "Claudio Serafino",
+                file: "Claudio.jpg",
+                desc: "Pengusir setan Italia yang mendapatkan buff kekuatan busur panah suci Starburst otomatis.",
+                punish: [{ name: "Skyward Arrow Lift (i15)", dmg: "69 DMG", moves: ["df+2"], note: "Otomatis mengaktifkan buff tangan kanan Starburst.", video: "claudio_punish.mp4" }],
+                popular: [{ name: "Starburst Illumina Arrow", dmg: "97 DMG", moves: ["ff+4", "STB b+1+2", "f+2", "b+4,3", "f,f+2"], note: "Membakar bar musuh dengan ledakan sihir busur suci.", video: "claudio_popular.mp4" }]
+            },
+            "devil jin": {
+                name: "Devil Jin",
+                file: "Reina Mishima.jpg",
+                desc: "Wujud iblis Jin Kazama dengan sayap hitam, pancaran laser maut, dan rantaian serangan udara sadis.",
+                punish: [{ name: "EWGF Devil Launch (i14)", dmg: "79 DMG", moves: ["F", "N", "D", "DF+ <span class='attack-circle'>2</span>"], note: "Electric legendaris variasi sayap iblis.", video: "devil_jin_punish.mp4" }],
+                popular: [{ name: "Hellfire Mourning", dmg: "98 DMG", moves: ["f,n,d,df+2", "ff+4", "b+1,2", "f,f+3,1+2"], note: "Menggunakan hellsweep ekstensi udara yang masif.", video: "devil_jin_popular.mp4" }]
+            },
+            "eddy": {
+                name: "Eddy Gordo",
+                file: "Eddy.jpg",
+                desc: "Master Capoeira dengan tarian kaki melingkar ritmis yang sangat sulit ditebak arah bloknya.",
+                punish: [{ name: "Samba Wheel Launcher (i15)", dmg: "69 DMG", moves: ["df+2"], note: "Tendangan salto melingkar pembalik keadaan.", video: "eddy_punish.mp4" }],
+                popular: [{ name: "Ginga Capoeira Infinite", dmg: "95 DMG", moves: ["3+4", "RLX 4,3", "HSP 1,2", "f,f+3"], note: "Kombo breakdance acak lantai penembus low guard musuh.", video: "eddy_popular.mp4" }]
+            },
+            "feng": {
+                name: "Feng Wei",
+                file: "Feng.jpg",
+                desc: "Master Kenpo Tiongkok yang haus kemenangan dengan poke bawah terbaik di kelas turnamen.",
+                punish: [{ name: "Rising Dragon Fist (i15)", dmg: "70 DMG", moves: ["f+3,4"], note: "Launcher andalan penembus blokade atas.", video: "feng_punish.mp4" }],
+                popular: [{ name: "Kenpo Backstep Counter", dmg: "91 DMG", moves: ["f+4,3", "df+1", "b+1+2", "STC 2", "f,f+1+2"], note: "Mematikan jarak serang via evasion kuda-kuda mundur.", video: "feng_popular.mp4" }]
+            },
+            "hwoarang": {
+                name: "Hwoarang",
+                file: "Hwoarang.jpg",
+                desc: "Master Taekwondo dengan rantai serangan tanpa henti lewat pergantian kuda-kuda kaki Flamingo.",
+                punish: [{ name: "Sky Rocket Launch (i15)", dmg: "71 DMG", moves: ["f,N,d,df+4"], note: "Launcher wajib kuasai bagi pro player Hwoarang.", video: "hwoarang_punish.mp4" }],
+                popular: [{ name: "Flamingo Endless Chain", dmg: "94 DMG", moves: ["df+2", "f+4", "RFF 3,4", "LFS 1,4", "f,f+4"], note: "Menjebak pertahanan musuh dengan tekanan string konstan.", video: "hwoarang_popular.mp4" }]
+            },
+            "jack-8": {
+                name: "Jack-8",
+                file: "Jack-8.jpg",
+                desc: "Robot militer raksasa dengan jangkauan tangan luar biasa dan poke berdamage masif meriam laser.",
+                punish: [{ name: "Upper Rocket Launcher (i15)", dmg: "74 DMG", moves: ["df+2"], note: "Jangkauan gila, punisher jarak menengah terbaik.", video: "jack8_punish.mp4" }],
+                popular: [{ name: "Giga Gigaton Cannon", dmg: "104 DMG", moves: ["f+1+2", "b+3,2", "f,f+4", "HMP 1+2"], note: "Kombo rongsokan besi penyapu sisa HP musuh.", video: "jack8_popular.mp4" }]
+            },
+            "jin": {
+                name: "Jin Kazama",
+                file: "Jin Kazama.jpg",
+                desc: "Protagonis dengan gaya Karate Tradisional yang sangat berimbang dan toolkit serba bisa.",
+                punish: [{ name: "EWHF Fast Launcher (i14)", dmg: "76 DMG", moves: ["F", "N", "D", "DF+ <span class='attack-circle'>2</span>"], note: "Electric Wind Hook Fist penentu tempo game.", video: "jin_punish.mp4" }],
+                popular: [{ name: "Omen Awakening", dmg: "95 DMG", moves: ["uf+4", "b+3,2", "df+1,1", "f+4", "Heat Smash"], note: "Menghasilkan knockdown jauh yang menguntungkan setup okizeme.", video: "jin_popular.mp4" }]
+            },
+            "jun": {
+                name: "Jun Kazama",
+                file: "Jun Kazama.jpg",
+                desc: "Ibu dari Jin yang mengandalkan manipulasi energi cahaya suci pembersih kegelapan.",
+                punish: [{ name: "Kazama Pure Light (i15)", dmg: "72 DMG", moves: ["df+2"], note: "Launcher kilat penembus pertahanan suci.", video: "jun_punish.mp4" }],
+                popular: [{ name: "Izumo Spiritual Dance", dmg: "91 DMG", moves: ["u+4", "Izumo 1,2", "f+3,2", "d+1+2"], note: "Heal pasif sambil memberikan rotasi combo stabil.", video: "jun_popular.mp4" }]
+            },
+            "kazuya": {
+                name: "Kazuya Mishima",
+                file: "Kazuya Mishima.jpg",
+                desc: "Mengandalkan EWGF frame sempurna dan mixup vortex 50/50 neraka pasca knockdown dengan kekuatan Heat System.",
+                punish: [{ name: "EWGF Perfect Punish (i14)", dmg: "80 DMG", moves: ["F", "N", "D", "DF+ <span class='attack-circle'>2</span>"], note: "Just-frame launcher legendaris penentu kemenangan.", video: "kazuya_punish.mp4" }],
+                popular: [{ name: "Mishima Heat Stamp", dmg: "102 DMG", moves: ["f,n,d,df+2", "3,1,4", "b+2,4", "Heat Dash", "df+1,2"], note: "Combo standard wajib kuasai yang memanfaatkan wall splat.", video: "kazuya_popular.mp4" }]
+            },
+            "king": {
+                name: "King",
+                file: "King.jpg",
+                desc: "Pegulat bertopeng jaguar dengan mekanik chain grab yang diperkuat habis-habisan lewat power dash.",
+                punish: [{ name: "Smash Launcher (i15)", dmg: "65 DMG", moves: ["uf+4"], note: "Whiff punisher terjauh yang dimiliki King.", video: "king_punish.mp4" }],
+                popular: [{ name: "Jaguar Sprint Death Drop", dmg: "88 DMG", moves: ["f,f+N+2", "df+4,3", "f,f,f+3", "Giant Swing"], note: "Kombo slam super dramatis kesukaan penonton turnamen.", video: "king_popular.mp4" }]
+            },
+            "kuma": {
+                name: "Kuma",
+                file: "Kuma.jpg",
+                desc: "Beruang peliharaan Heihachi yang mewarisi jurus Karate Mishima gaya liar dibantu lari salmon.",
+                punish: [{ name: "Bear Upper Launcher (i15)", dmg: "73 DMG", moves: ["df+2"], note: "Menghukum musuh dari jarak jauh dengan tangan berbulu.", video: "kuma_punish.mp4" }],
+                popular: [{ name: "Salmon Smash Mishima", dmg: "99 DMG", moves: ["f,n,d,df+2", "Bear u+1+2", "b+2,1", "Rage Smash"], note: "Pukulan beruang dengan efek kilatan petir khas Mishima.", video: "kuma_popular.mp4" }]
+            },
+            "kunimitsu": {
+                name: "Kunimitsu",
+                file: "kunimitsu.jpg",
+                desc: "Kunoichi bertopeng rubah lincah pemegang belati kembar Manji dengan pergerakan teleportasi ninja super cepat.",
+                punish: [{ name: "Kunai Blitz Slash (i15)", dmg: "68 DMG", moves: ["df+2"], note: "Whiff punisher jarak jauh instan menggunakan belati ninja.", video: "kunimitsu_punish.mp4" }],
+                popular: [{ name: "Fox Fire Ninjutsu", dmg: "93 DMG", moves: ["qcf+1", "f+4", "b+1,1,f", "SET 2", "f,f+2"], note: "Kombo akrobatik udara tebasan pedang bayangan yang membingungkan.", video: "kunimitsu_popular.mp4" }]
+            },
+            "lars": {
+                name: "Lars Alexandersson",
+                file: "Lars.jpg",
+                desc: "Komandan pasukan taktis dengan mobilitas pergerakan kilat berkat status Dynamic Entry teranyar.",
+                punish: [{ name: "Lightning Flash (i15)", dmg: "70 DMG", moves: ["fb+2,1"], note: "Akurasi tinggi untuk memotong gerakan musuh.", video: "lars_punish.mp4" }],
+                popular: [{ name: "Silent Entry Thunder", dmg: "96 DMG", moves: ["fb+2,1", "DE 1", "SE 3", "SEN 2", "f,f+2"], note: "Gerakan zig-zag kilat yang mengacaukan fokus visual mata.", video: "lars_popular.mp4" }]
+            },
+            "lee": {
+                name: "Lee Chaolan",
+                file: "Lee.jpg",
+                desc: "Petarung flamboyan dengan akurasi just-frame yang berfokus penuh pada keindahan visual Excellent.",
+                punish: [{ name: "Excellent Lift (i15)", dmg: "70 DMG", moves: ["df+2"], note: "Sangat elegan dan aman dari serangan balasan.", video: "lee_punish.mp4" }],
+                popular: [{ name: "Just Frame Marvelous", dmg: "102 DMG", moves: ["b+4 (CH)", "b+1,1,f", "HMS 2", "f,f+4", "f,f,f+3"], note: "Butuh timing ketat tombol biru 'Just Frame' demi damage maksimal.", video: "lee_popular.mp4" }]
+            },
+            "leo": {
+                name: "Leo Kliesen",
+                file: "Leo Kliesen.jpg",
+                desc: "Pengguna teknik Bajiquan yang kokoh dan memiliki kemampuan wall-pressure luar biasa.",
+                punish: [{ name: "Striking Palm Launcher (i15)", dmg: "68 DMG", moves: ["df+2"], note: "Menghasilkan efek airborne tinggi bagi target.", video: "leo_punish.mp4" }],
+                popular: [{ name: "Knessel Fist Wall Break", dmg: "90 DMG", moves: ["BBO 2", "f+4,2", "f,f+3", "qcf+2"], note: "Spesialisasi penghancur tembok pembatas stage.", video: "leo_popular.mp4" }]
+            },
+            "leroy": {
+                name: "Leroy Smith",
+                file: "Leroy Smith.jpg",
+                desc: "Master Wing Chun legendaris asal New York dengan pertahanan parry penangkis absolut.",
+                punish: [{ name: "Wing Chun Chain Punch (i15)", dmg: "66 DMG", moves: ["df+2"], note: "Hantaman telapak tangan pembuka celah.", video: "leroy_punish.mp4" }],
+                popular: [{ name: "Grandmaster IP Man Strike", dmg: "92 DMG", moves: ["f+4+5", "HRT 1,2", "df+1,1", "f,f+2"], note: "Pukulan beruntun cepat yang menempel ketat musuh.", video: "leroy_popular.mp4" }]
+            },
+            "lili": {
+                name: "Lili",
+                file: "Lili.jpg",
+                desc: "Gaya bertarung senam akrobatik elegan dengan kemampuan sidestep terbaik di generasi baru.",
+                punish: [{ name: "Alstroemeria Lift (i15)", dmg: "68 DMG", moves: ["df+2"], note: "Launcher aman untuk menghukum kelengahan frame musuh.", video: "lili_punish.mp4" }],
+                popular: [{ name: "Elegant Acrobat", dmg: "90 DMG", moves: ["df+3+4", "f+2,3", "b+1,4", "qcf+1,2"], note: "Kombo rotasi estetik dengan jangkauan carry dinding yang jauh.", video: "lili_popular.mp4" }]
+            },
+            "xiaoyu": {
+                name: "Ling Xiaoyu",
+                file: "Ling Xiaoyu.jpg",
+                desc: "Ahli bela diri Tiongkok yang membingungkan musuh lewat stance Phoenix (AOP) super ceper.",
+                punish: [{ name: "Storm Kick Launcher (i15)", dmg: "63 DMG", moves: ["uf+4"], note: "Menghindari serangan low secara otomatis saat melompat.", video: "xiaoyu_punish.mp4" }],
+                popular: [{ name: "AOP Phoenix Flight", dmg: "88 DMG", moves: ["AOP d+1+2", "fw+2", "b+4,4", "f,f+1+2"], note: "Kombo evasi bawah tanah yang bikin musuh frustrasi.", video: "xiaoyu_popular.mp4" }]
+            },
+            "law": {
+                name: "Marshall Law",
+                file: "Law.jpg",
+                desc: "Gaya pertarung legendaris Jeet Kune Do yang gesit dan dipenuhi nunchaku bar bar di status Heat.",
+                punish: [{ name: "Flash Somersault (i15)", dmg: "69 DMG", moves: ["df+2"], note: "Launcher standar yang sangat andal.", video: "law_punish.mp4" }],
+                popular: [{ name: "Dragon Tail Legend", dmg: "89 DMG", moves: ["4,u+3", "b+2,34", "ff+4,3", "f+1+2"], note: "Counter hit combo dengan efek juggler tinggi.", video: "law_popular.mp4" }]
+            },
+            "nina": {
+                name: "Nina Williams",
+                file: "Nina williams.jpg",
+                desc: "Pembunuh bayaran senyap dengan poke beruntun mematikan menggunakan pistols gun di Heat-nya.",
+                punish: [{ name: "Blonde Bomb Launch (i15)", dmg: "72 DMG", moves: ["df+2"], note: "Launcher instan andalan turnamen global.", video: "nina_punish.mp4" }],
+                popular: [{ name: "Gunslinger Butterfly Loop", dmg: "101 DMG", moves: ["db+2", "df+1", "qcf+1", "qcf+1", "f,f+3"], note: "Kombo string tingkat lanjut dengan damage optimal.", video: "nina_popular.mp4" }]
+            },
+            "panda": {
+                name: "Panda",
+                file: "Panda.jpg",
+                desc: "Sahabat setia Xiaoyu dengan hitbox unik yang mampu mengacak-acak combo standar lawan.",
+                punish: [{ name: "Panda Paw Slap (i15)", dmg: "71 DMG", moves: ["df+2"], note: "Sangat andal mematahkan serangan tergesa-gesa.", video: "panda_punish.mp4" }],
+                popular: [{ name: "Rolling Bamboo Shoot", dmg: "88 DMG", moves: ["uf+4", "df+1", "Bear Roll 1,2", "f+1+2"], note: "Kombo berguling lucu namun berdamage tebal.", video: "panda_popular.mp4" }]
+            },
+            "paul": {
+                name: "Paul Phoenix",
+                file: "Paul.jpg",
+                desc: "Judoka gahar pemilik pukulan maut pemecah bar darah lawan dalam sekejap via Heat Smash.",
+                punish: [{ name: "Shredder High Kick (i15)", dmg: "72 DMG", moves: ["uf+3,4"], note: "Hopkick standar dengan output damage luar biasa.", video: "paul_punish.mp4" }],
+                popular: [{ name: "Deathfist Max Judgement", dmg: "110 DMG", moves: ["df+2", "f+4", "b+1,2", "qcf+2"], note: "Damage raksasa tanpa butuh eksekusi mekanik rumit.", video: "paul_popular.mp4" }]
+            },
+            "raven": {
+                name: "Raven",
+                file: "Raven.jpg",
+                desc: "Agen rahasia bayangan berteknologi tinggi Ninja modern yang mampu membelah diri menjadi banyak klon.",
+                punish: [{ name: "Shadow Clone Uppercut (i15)", dmg: "70 DMG", moves: ["df+2"], note: "Kloning bayangan membantu menahan musuh.", video: "raven_punish.mp4" }],
+                popular: [{ name: "Jutsu Substitution Juggler", dmg: "95 DMG", moves: ["ff+3", "SZ 2,1", "Klon 4", "b+4,4", "qcf+2"], note: "Membuat ilusi multi bayangan bertubi-tubi di udara.", video: "raven_popular.mp4" }]
+            },
+            "reina": {
+                name: "Reina",
+                file: "Reina Mishima.jpg",
+                desc: "Penerus misterius teknik Mishima digabung Taido yang super lincah, agresif, dan ofensif.",
+                punish: [{ name: "Taido Electric Launcher (i14)", dmg: "75 DMG", moves: ["F", "N", "D", "DF+ <span class='attack-circle'>2</span>"], note: "EWGF versi Reina dengan recovery status yang instan.", video: "reina_punish.mp4" }],
+                popular: [{ name: "Sentai Mixup End", dmg: "92 DMG", moves: ["f,n,d,df+2", "f+2,3", "Sentai 1,2", "f,f+3"], note: "Sangat efektif merusak mental defense musuh di pojok map.", video: "reina_popular.mp4" }]
+            },
+            "dragunov": {
+                name: "Sergei Dragunov",
+                file: "Dragunov.jpg",
+                desc: "Tentara Sambo Rusia berdarah dingin dengan tekanan pukulan running yang sangat OP di era baru.",
+                punish: [{ name: "Sambo Blizzard Lift (i15)", dmg: "73 DMG", moves: ["df+2"], note: "Launcher krusial penentu kemenangan tim.", video: "dragunov_punish.mp4" }],
+                popular: [{ name: "Blizzard Running Pressure", dmg: "103 DMG", moves: ["qcf+1", "ff+3", "1,2", "f,f,f+2", "d+4,1,3"], note: "Kombo tebal yang menghancurkan bar poise pertahanan musuh.", video: "dragunov_popular.mp4" }]
+            },
+            "shaheen": {
+                name: "Shaheen",
+                file: "Shaheen.jpg",
+                desc: "Gaya bertarung militer taktis Arab Saudi yang berfokus pada fundamental pertahanan solid.",
+                punish: [{ name: "Falcon Strike (i15)", dmg: "67 DMG", moves: ["df+2"], note: "Sederhana, aman dari serangan balik musuh.", video: "shaheen_punish.mp4" }],
+                popular: [{ name: "Al-Tair Surfing Slam", dmg: "89 DMG", moves: ["fb+2", "df+1", "3,2,f", "SNK 2", "f,f,f+3"], note: "Kombo seluncur di atas tubuh lawan yang ikonik.", video: "shaheen_popular.mp4" }]
+            },
+            "steve": {
+                name: "Steve Fox",
+                file: "Steve Fox.jpg",
+                desc: "Juara tinju dunia tanpa tendangan kaki, murni mengandalkan kelincahan ducking menghindar.",
+                punish: [{ name: "Sonic Flash Counter (i14 CH)", dmg: "70 DMG", moves: ["b+1"], note: "Counter hit tercepat dengan jaminan combo instan.", video: "steve_punish.mp4" }],
+                popular: [{ name: "Ducking Flicker Barrage", dmg: "94 DMG", moves: ["DCK 1", "FLK 1,1,f", "DCK 2", "b+1,2"], note: "Murni pukulan atas-tengah super deras tanpa kaki.", video: "steve_popular.mp4" }]
+            },
+            "victor": {
+                name: "Victor Chevalier",
+                file: "Victor.jpg",
+                desc: "Pendiri pasukan khusus PBB bersenjatakan pedang plasma cyber dan pisau teleportasi taktis.",
+                punish: [{ name: "Cyber Blade Launch (i15)", dmg: "71 DMG", moves: ["df+2"], note: "Pedang laser futuristik berjangkauan panjang.", video: "victor_punish.mp4" }],
+                popular: [{ name: "Expulsion Teleport Strike", dmg: "98 DMG", moves: ["u+1+2", "Iai 1,2", "f,f+2", "Perfume 2", "b+1+2"], note: "Kombo spam pedang holografik andalan rank grandmaster.", video: "victor_popular.mp4" }]
+            },
+            "yoshimitsu": {
+                name: "Yoshimitsu",
+                file: "Yoshimitsu.jpg",
+                desc: "Pemimpin klan Manji penunggang pedang kutukan banyolan yang memiliki gaya aneh dengan jurus pemulih darah hoki.",
+                punish: [{ name: "Kirin Slasher (i15)", dmg: "68 DMG", moves: ["df+2"], note: "Tebasan pedang berputar yang aman.", video: "yoshimitsu_punish.mp4" }],
+                popular: [{ name: "Manji Meditation Loop", dmg: "91 DMG", moves: ["f,f+2", "b+1,1", "FLE 2", "d+3+4"], note: "Kombo unik yang bisa mencuri HP musuh.", video: "yoshimitsu_popular.mp4" }]
+            },
+            "zafina": {
+                name: "Zafina",
+                file: "Zafina.jpeg",
+                desc: "Petarung mistis dengan pergerakan melata ala labah-labah berkat kekuatan cakar iblis Azazel.",
+                punish: [{ name: "Scorpion Tail Lift (i15)", dmg: "65 DMG", moves: ["df+2"], note: "Sudut serang rendah yang mengejutkan lawan.", video: "zafina_punish.mp4" }],
+                popular: [{ name: "Azazel Claw Devour", dmg: "87 DMG", moves: ["Scarecrow 3,4", "d+3", "Tarantula 1,2", "b+1+2"], note: "Hitbox super aneh yang membingungkan timing bangun musuh.", video: "zafina_popular.mp4" }]
+            },
+            "lidia": {
+                name: "Lidia Sobieska",
+                file: "Lidia.jpg",
+                desc: "Perdana Menteri Polandia petarung Shotokan Karate ortodoks dengan fokus stance Heaven & Earth.",
+                punish: [{ name: "Political Strike (i15)", dmg: "72 DMG", moves: ["df+2"], note: "Launcher karate lurus yang bersih menghukum celah frame.", video: "lidia_punish.mp4" }],
+                popular: [{ name: "Poland Pride Combo", dmg: "100 DMG", moves: ["f,f+3", "df+1", "Stance 3,1", "Heat Dash", "b+4,1"], note: "Kombo hantaman keras berkekuatan lari lurus ke depan.", video: "lidia_popular.mp4" }]
+            },
+            "heihachi": {
+                name: "Heihachi Mishima",
+                file: "Heihachi.jpg",
+                desc: "Penguasa sejati Iron Fist yang bangkit kembali dengan gaya Karate Mishima murni super keras.",
+                punish: [{ name: "Classic EWGF Punish (i14)", dmg: "83 DMG", moves: ["F", "N", "D", "DF+ <span class='attack-circle'>2</span>"], note: "Electric legendaris orisinal sang raja klan.", video: "heihachi_punish.mp4" }],
+                popular: [{ name: "Hell Axle Volcanic Dragon", dmg: "108 DMG", moves: ["f,n,d,df+2", "f,f+2", "1,b+2", "f,f+3", "qcf+2"], note: "Kombo legendaris penghancur tulang punggung.", video: "heihachi_popular.mp4" }]
+            }
+        };
+
+        const allRosters = [
+            "alisa", "anna", "armor king", "asuka", "azucena", "bryan", "claudio", "devil jin", "eddy", "feng", 
+            "hwoarang", "jack-8", "jin", "jun", "kazuya", "king", "kuma", "kunimitsu", "lars", 
+            "lee", "leo", "leroy", "lili", "xiaoyu", "law", "nina", "panda", 
+            "paul", "raven", "reina", "dragunov", "shaheen", "steve", "victor", "yoshimitsu", "zafina",
+            "lidia", "heihachi"
+        ];
+
+        let currentSelectedChar = 'alisa';
+        const gridContainer = document.getElementById('characterGrid');
+
+        function generateButtons(filterKeyword = '') {
+            gridContainer.innerHTML = ''; 
+            allRosters.forEach((charKey) => {
+                const data = characterDatabase[charKey];
+                const charName = data ? data.name : charKey;
+                
+                if (filterKeyword && !charName.toLowerCase().includes(filterKeyword.toLowerCase())) {
+                    return;
+                }
+
+                const btn = document.createElement('button');
+                btn.className = 'char-btn';
+                
+                if (["eddy", "lidia", "heihachi"].includes(charKey)) {
+                    btn.classList.add('dlc-char');
+                }
+                
+                btn.innerText = charName.toUpperCase();
+                btn.onclick = () => selectCharacter(charKey, btn);
+                
+                if (charKey === currentSelectedChar) {
+                    btn.classList.add('active');
+                }
+                
+                gridContainer.appendChild(btn);
+            });
+        }
+
+        function selectCharacter(charKey, buttonElement) {
+            currentSelectedChar = charKey;
+            document.querySelectorAll('.char-btn').forEach(b => b.classList.remove('active'));
+            
+            if(buttonElement) {
+                buttonElement.classList.add('active');
+            } else {
+                const btns = document.querySelectorAll('.char-btn');
+                btns.forEach(b => {
+                    if(b.innerText.toLowerCase() === characterDatabase[charKey].name.toLowerCase()) {
+                        b.classList.add('active');
+                    }
+                });
+            }
+
+            const data = characterDatabase[charKey];
+            if (!data) return;
+
+            document.getElementById('charName').innerText = data.name;
+            document.getElementById('charDesc').innerText = data.desc;
+            document.getElementById('charPlaceholder').innerText = data.name.split(' ')[0];
+            
+            const imgEl = document.getElementById('charImage');
+            imgEl.style.display = 'block';
+            imgEl.src = data.file;
+
+            renderAllCombos();
+        }
+
+        function renderAllCombos() {
+            const punishContainer = document.getElementById('punishCombosContainer');
+            const popularContainer = document.getElementById('popularCombosContainer');
+            
+            punishContainer.innerHTML = '';
+            popularContainer.innerHTML = '';
+            
+            const data = characterDatabase[currentSelectedChar];
+            if (!data) return;
+
+            data.punish.forEach(c => {
+                punishContainer.appendChild(createComboCard(c));
+            });
+
+            data.popular.forEach(c => {
+                popularContainer.appendChild(createComboCard(c));
+            });
+        }
+
+        function createComboCard(combo) {
+            const box = document.createElement('div');
+            box.className = 'combo-box';
+
+            let movesHTML = '';
+            combo.moves.forEach((move, i) => {
+                movesHTML += `<div class="input-btn">${move}</div>`;
+                if (i < combo.moves.length - 1) {
+                    movesHTML += `<span class="silver-arrow">➔</span>`;
+                }
+            });
+
+            let videoHTML = '';
+            if (combo.video) {
+                videoHTML = `
+                    <div class="combo-video-wrapper">
+                        <video autoplay loop muted playsinline>
+                            <source src="${combo.video}" type="video/mp4">
+                        </video>
+                    </div>
+                `;
+            }
+
+            box.innerHTML = `
+                <div class="combo-header">
+                    <span class="combo-name">${combo.name}</span>
+                    <span class="combo-damage">${combo.dmg}</span>
+                </div>
+                ${videoHTML} 
+                <div class="notation-row">
+                    ${movesHTML}
+                </div>
+                <div class="combo-footer-note">${combo.note}</div>
+            `;
+            return box;
+        }
+
+        document.getElementById('charSearchInput').addEventListener('input', (e) => {
+            generateButtons(e.target.value);
+        });
+
+        generateButtons();
+        selectCharacter('alisa', null);
+    </script>
+</body>
+</html>
