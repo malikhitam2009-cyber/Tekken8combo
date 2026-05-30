@@ -60,88 +60,55 @@
 
         /* DYNAMIC SEARCH BAR STYLE */
         .search-wrapper {
-            margin-bottom: 15px;
+            margin-bottom: 45px;
             display: flex;
             justify-content: center;
         }
 
         .search-input {
             width: 100%;
-            max-width: 400px;
-            padding: 12px 20px;
+            max-width: 500px;
+            padding: 15px 25px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.2rem;
             background-color: #0d0708;
             border: 2px solid #4a282c;
             border-radius: 4px;
             color: #ffffff;
             letter-spacing: 1px;
             transition: all 0.3s ease;
+            text-align: center;
         }
 
         .search-input:focus {
             outline: none;
             border-color: #ff1a1a;
-            box-shadow: 0 0 15px rgba(255, 26, 26, 0.4);
+            box-shadow: 0 0 20px rgba(255, 26, 26, 0.5);
         }
 
-        /* CHARACTER GRID BOX */
-        .character-selection-box {
-            background-color: rgba(5, 4, 4, 0.95);
-            border: 1px solid #3a1a1e;
-            border-top: 4px solid #ff1a1a;
-            padding: 25px;
-            margin-bottom: 35px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-        }
-
-        .char-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .char-btn {
-            background: linear-gradient(135deg, #1f1416 0%, #0a0607 100%);
-            color: #d1d1d1;
-            border: 1px solid #4a282c;
-            padding: 10px 4px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: all 0.15s ease;
+        /* STATUS DISPLAY AWAL (PROMPT & NOT FOUND) */
+        .status-message-box {
             text-align: center;
+            padding: 60px 20px;
+            background-color: rgba(13, 7, 8, 0.6);
+            border: 1px dashed #4a282c;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .status-message-box h3 {
+            font-size: 1.5rem;
+            color: #b0b0b0;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            clip-path: polygon(0 0, 90% 0, 100% 25%, 100% 100%, 10% 100%, 0% 75%);
         }
 
-        .char-btn:hover {
-            background: #ffffff;
-            color: #000000;
-            border-color: #ffffff;
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
-        }
-
-        .char-btn.active {
-            background: linear-gradient(135deg, #ff1a1a 0%, #990000 100%);
-            color: #ffffff;
-            border: 1px solid #ff6666;
-            font-weight: 900;
-            box-shadow: 0 0 20px rgba(255, 26, 26, 0.7);
-        }
-        
-        .char-btn.dlc-char {
-            border-color: #bfa15f;
-        }
-        .char-btn.dlc-char.active {
-            background: linear-gradient(135deg, #d4af37 0%, #8a6d1c 100%);
-            border: 1px solid #fff2a3;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+        .status-message-box p {
+            color: #ff1a1a;
+            margin-top: 10px;
+            font-size: 1rem;
+            letter-spacing: 1px;
         }
 
         /* LAYOUT MAIN CONTENT */
@@ -358,14 +325,17 @@
 
     <div class="container">
         <div class="search-wrapper">
-            <input type="text" id="charSearchInput" class="search-input" placeholder="CARI KARAKTER...">
+            <input type="text" id="charSearchInput" class="search-input" placeholder="KETIK NAMA KARAKTER... (misal: JIN)">
         </div>
 
-        <div class="character-selection-box">
-            <div class="char-grid" id="characterGrid"></div>
+        <!-- Box Pesan Awal / Not Found -->
+        <div id="statusMessageBox" class="status-message-box">
+            <h3>Masukkan Nama Karakter</h3>
+            <p>Sistem akan menampilkan data kombo secara otomatis saat Anda mengetik.</p>
         </div>
 
-        <div class="main-content">
+        <!-- Layout utama disembunyikan saat kosong dan muncul otomatis via JS -->
+        <div id="mainDatabaseLayout" class="main-content" style="display: none;">
             <aside class="character-card">
                 <div class="char-banner-box">
                     <div id="charPlaceholder" class="char-banner-placeholder"></div>
@@ -394,6 +364,7 @@
     </footer>
 
     <script>
+        // Database lengkap bawaan asli dari kodingan lu
         const characterDatabase = {
             "alisa": {
                 name: "Alisa Bosconovitch",
@@ -603,7 +574,7 @@
                 file: "Reina Mishima.jpg",
                 desc: "Penerus misterius teknik Mishima digabung Taido yang super lincah, agresif, dan ofensif.",
                 punish: [{ name: "Taido Electric Launcher (i14)", dmg: "75 DMG", moves: ["F", "N", "D", "DF+ <span class='attack-circle'>2</span>"], note: "EWGF versi Reina dengan recovery status yang instan.", video: "reina_punish.mp4" }],
-                popular: [{ name: "Sentai Mixup End", dmg: "92 DMG", moves: ["f,n,d,df+2", "f+2,3", "Sentai 1,2", "f,f+3"], note: "Sangat efektif merusak mental defense musuh di pojok map.", video: "reina_popular.mp4" }]
+                popular: [{ name: "Sentai Mixup End", dmg: "92 DMG", moves: ["f,n,d,df+2", "f+2,3", "Sentai 1,2", "f,f+3"], note: "Skat efektif merusak mental defense musuh di pojok map.", video: "reina_popular.mp4" }]
             },
             "dragunov": {
                 name: "Sergei Dragunov",
@@ -663,63 +634,52 @@
             }
         };
 
-        const allRosters = [
-            "alisa", "anna", "armor king", "asuka", "azucena", "bryan", "claudio", "devil jin", "eddy", "feng", 
-            "hwoarang", "jack-8", "jin", "jun", "kazuya", "king", "kuma", "kunimitsu", "lars", 
-            "lee", "leo", "leroy", "lili", "xiaoyu", "law", "nina", "panda", 
-            "paul", "raven", "reina", "dragunov", "shaheen", "steve", "victor", "yoshimitsu", "zafina",
-            "lidia", "heihachi"
-        ];
+        // Ambil elemen HTML penting
+        const searchInput = document.getElementById('charSearchInput');
+        const statusBox = document.getElementById('statusMessageBox');
+        const mainLayout = document.getElementById('mainDatabaseLayout');
 
-        let currentSelectedChar = 'alisa';
-        const gridContainer = document.getElementById('characterGrid');
+        // Fungsi mencocokkan input ketikan dengan database secara dinamis
+        searchInput.addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase().trim();
 
-        function generateButtons(filterKeyword = '') {
-            gridContainer.innerHTML = ''; 
-            allRosters.forEach((charKey) => {
-                const data = characterDatabase[charKey];
-                const charName = data ? data.name : charKey;
-                
-                if (filterKeyword && !charName.toLowerCase().includes(filterKeyword.toLowerCase())) {
-                    return;
-                }
-
-                const btn = document.createElement('button');
-                btn.className = 'char-btn';
-                
-                if (["eddy", "lidia", "heihachi"].includes(charKey)) {
-                    btn.classList.add('dlc-char');
-                }
-                
-                btn.innerText = charName.toUpperCase();
-                btn.onclick = () => selectCharacter(charKey, btn);
-                
-                if (charKey === currentSelectedChar) {
-                    btn.classList.add('active');
-                }
-                
-                gridContainer.appendChild(btn);
-            });
-        }
-
-        function selectCharacter(charKey, buttonElement) {
-            currentSelectedChar = charKey;
-            document.querySelectorAll('.char-btn').forEach(b => b.classList.remove('active'));
-            
-            if(buttonElement) {
-                buttonElement.classList.add('active');
-            } else {
-                const btns = document.querySelectorAll('.char-btn');
-                btns.forEach(b => {
-                    if(b.innerText.toLowerCase() === characterDatabase[charKey].name.toLowerCase()) {
-                        b.classList.add('active');
-                    }
-                });
+            // Kondisi 1: Jika search bar kosong kembali ke setelan pabrik
+            if (keyword === '') {
+                statusBox.style.display = 'block';
+                mainLayout.style.display = 'none';
+                statusBox.innerHTML = `
+                    <h3>Masukkan Nama Karakter</h3>
+                    <p>Sistem akan menampilkan data kombo secara otomatis saat Anda mengetik.</p>
+                `;
+                return;
             }
 
-            const data = characterDatabase[charKey];
-            if (!data) return;
+            // Cari kunci objek di database yang mengandung atau mirip dengan ketikan user
+            // Contoh: mengetik "ji" akan langsung mematangkan kecocokan ke "jin"
+            const matchedKey = Object.keys(characterDatabase).find(key => 
+                key.includes(keyword) || characterDatabase[key].name.toLowerCase().includes(keyword)
+            );
 
+            // Kondisi 2: Jika karakter ditemukan
+            if (matchedKey) {
+                statusBox.style.display = 'none';
+                mainLayout.style.display = 'grid'; // Tampilkan layout utama database
+                displayCharacterData(matchedKey);
+            } else {
+                // Kondisi 3: Karakter tidak ditemukan di database
+                mainLayout.style.display = 'none';
+                statusBox.style.display = 'block';
+                statusBox.innerHTML = `
+                    <h3 style="color: #ff1a1a;">Karakter "${e.target.value}" Tidak Ditemukan</h3>
+                    <p style="color: #b0b0b0;">Silakan coba nama petarung Tekken 8 lainnya...</p>
+                `;
+            }
+        });
+
+        // Fungsi merender data karakter terpilih ke UI (Logika asli lu yang di-upgrade)
+        function displayCharacterData(charKey) {
+            const data = characterDatabase[charKey];
+            
             document.getElementById('charName').innerText = data.name;
             document.getElementById('charDesc').innerText = data.desc;
             document.getElementById('charPlaceholder').innerText = data.name.split(' ')[0];
@@ -728,28 +688,18 @@
             imgEl.style.display = 'block';
             imgEl.src = data.file;
 
-            renderAllCombos();
-        }
-
-        function renderAllCombos() {
+            // Render box kombo pro dan populer
             const punishContainer = document.getElementById('punishCombosContainer');
             const popularContainer = document.getElementById('popularCombosContainer');
             
             punishContainer.innerHTML = '';
             popularContainer.innerHTML = '';
             
-            const data = characterDatabase[currentSelectedChar];
-            if (!data) return;
-
-            data.punish.forEach(c => {
-                punishContainer.appendChild(createComboCard(c));
-            });
-
-            data.popular.forEach(c => {
-                popularContainer.appendChild(createComboCard(c));
-            });
+            data.punish.forEach(c => punishContainer.appendChild(createComboCard(c)));
+            data.popular.forEach(c => popularContainer.appendChild(createComboCard(c)));
         }
 
+        // Fungsi pembuat elemen card notasi tombol kombo bawaan asli lu
         function createComboCard(combo) {
             const box = document.createElement('div');
             box.className = 'combo-box';
@@ -786,13 +736,6 @@
             `;
             return box;
         }
-
-        document.getElementById('charSearchInput').addEventListener('input', (e) => {
-            generateButtons(e.target.value);
-        });
-
-        generateButtons();
-        selectCharacter('alisa', null);
     </script>
 </body>
 </html>
